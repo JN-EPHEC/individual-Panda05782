@@ -25,6 +25,18 @@ app.get('/', (req: Request, res: Response) => {
     res.send("Bienvenue sur mon serveur API");
 });
 
+// Route avec paramètre dynamique (:name)
+app.get('/api/hello/:name', (req: Request, res: Response) => {
+    // 1. On récupère la valeur de ":name" depuis l'URL
+    const nameFromUrl: string = req.params.name;
+
+    // 2. On prépare la réponse JSON demandée
+    res.json({
+        message: `Bonjour ${nameFromUrl}`,
+        timestamp: new Date().toISOString() // Génère la date précise au format ISO
+    });
+});
+
 // Lancement du serveur
 app.listen(port, () => {
     console.log(`Serveur lancé sur http://localhost:${port}`);
