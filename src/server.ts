@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import userRouter from './routes/userRoutes';
 const app = express();
 const port: number = 3000; // Typage explicite du port
 
@@ -36,6 +37,8 @@ app.get('/api/hello/:name', (req: Request, res: Response) => {
         timestamp: new Date().toISOString() // Génère la date précise au format ISO
     });
 });
+
+app.use('/api', userRouter);
 
 // Lancement du serveur
 app.listen(port, () => {
