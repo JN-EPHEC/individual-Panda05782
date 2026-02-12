@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
-import userRouter from './routes/userRoutes';
+import userRouter from './routes/userRoutes';   
+import sequelize from './config/database';
 const app = express();
 const port: number = 3000; // Typage explicite du port
 
