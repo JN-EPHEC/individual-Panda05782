@@ -10,7 +10,7 @@ app.use(express.json());
 app.get('/', (req: Request, res: Response) => {
     res.send('Bienvenue sur ma route API');
 });
-
+app.use(express.static('public'));
 app.use('/api', userRoutes);
 
 
