@@ -1,18 +1,40 @@
 import express, { Request, Response } from 'express';
 import sequelize from './config/database';
 import './models/User';
-import userRoutes from './routes/userRoutes';
+import userRouter from './routes/userRoutes';
 
 const app = express();
-const port: number = 3000; // Typage explicite du port
+const port: number = 3000;
+
+// 1. Middlewares de configuration
+// Permet à Express de lire le JSON envoyé par le client (req.body)
 app.use(express.json());
 
-app.get('/', (req: Request, res: Response) => {
-    res.send('Bienvenue sur ma route API');
-});
+// 2. Servir les fichiers statiques (Point 4.1 du TP)
+// Cherche automatiquement index.html dans le dossier /public
 app.use(express.static('public'));
-app.use('/api', userRoutes);
 
+// 3. Définition des routes API
+// On préfixe toutes les routes du fichier userRouter par '/api'
+app.use('/api', userRouter);
+
+// 4. Authentification et Synchronisation avec la base de données
+sequelize.authenticate()
+    .then(() => {
+        console.log('Connexion à la base de données SQLite réussie.');
+        // On synchronise les modèles (crée la table users si elle n'existe pas)
+        return sequelize.sync({ force: false });
+    })
+    .then(() => {
+        console.log('Synchronisation du modèle effectuée.');
+        // 5. Lancement du serveur
+        app.listen(port, () => {
+            console.log(`Serveur lancé sur http://localhost:${port}`);
+        });
+    })
+    .catch((error) => {
+        console.error('Erreur lors du démarrage du serveur :', error);
+    });
 
 /* Route GET sur la racine /
 / Défi typage relevé : on précise que 'req' est de type Request et 'res' de type Response
@@ -51,7 +73,8 @@ app.get('/api/hello/:name', (req: Request, res: Response) => {
 */
 
 
-// SYNCHRONISATION : C'est ici que Sequelize crée les tables manquantes
+/* partie synvrho qui marche
+ SYNCHRONISATION : C'est ici que Sequelize crée les tables manquantes
 sequelize.authenticate()
     .then(() => {
         console.log('Connexion à la base de données SQLite établie.');
@@ -67,4 +90,4 @@ sequelize.sync().then(() => {
     app.listen(port, () => {
         console.log(`Serveur lancé sur http://localhost:${port}`);
     });
-});
+});*/
