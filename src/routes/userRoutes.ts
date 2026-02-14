@@ -1,4 +1,56 @@
 import { Router, Request, Response } from 'express';
+import User from '../models/User'; // Import du modèle pour parler à la DB
+
+const router = Router();
+
+// --- 1. GET ALL USERS ---
+router.get('/users', async (req: Request, res: Response) => {
+  try {
+    // findAll() génère un "SELECT * FROM users" en SQL
+    const users = await User.findAll();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur lors de la récupération' });
+  }
+});
+
+// --- 2. CREATE USER (POST) ---
+router.post('/users', async (req: Request, res: Response) => {
+  try {
+    const { nom, prenom } = req.body; 
+
+    if (!nom || !prenom) {
+      return res.status(400).json({ error: 'Nom et prenom requis' });
+    }
+
+    // create() génère un "INSERT INTO users..."
+    const newUser = await User.create({ nom, prenom });
+    res.status(201).json(newUser);
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur lors de la création' });
+  }
+});
+
+// --- 3. DELETE USER BY ID ---
+router.delete('/users/:id', async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    // destroy() génère un "DELETE FROM users WHERE id = ..."
+    const deletedCount = await User.destroy({ where: { id: id } });
+
+    if (deletedCount === 0) {
+      return res.status(404).json({ error: 'Utilisateur non trouvé' });
+    }
+
+    res.status(204).send(); // Succès, mais pas de contenu à renvoyer
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur lors de la suppression' });
+  }
+});
+
+export default router;
+/*import { Router, Request, Response } from 'express';
 import User from '../models/User';
 
 const router = Router();
@@ -59,3 +111,4 @@ router.delete('/users/:id', async (req: Request, res: Response) => {
 });
 
 export default router;
+*/
