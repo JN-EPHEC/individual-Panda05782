@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import sequelize from './config/database';
 import './models/User';
 import userRouter from './routes/userRoutes';
+import User = require('./models/User');
 
 const app = express();
 const port: number = 3000;
@@ -21,21 +22,19 @@ app.use('/api', userRouter);
 // 4. Authentification et Synchronisation avec la base de données
 sequelize.authenticate()
     .then(() => {
-        console.log('Connexion à la base de données SQLite réussie.');
-        // On synchronise les modèles (crée la table users si elle n'existe pas)
-        return sequelize.sync({ force: false });
-    })
-    .then(() => {
-        console.log('Synchronisation du modèle effectuée.');
-        // 5. Lancement du serveur
-        app.listen(port, () => {
-            console.log(`Serveur lancé sur http://localhost:${port}`);
-        });
+        console.log('Connexion à la base de données SQLite établie.');
     })
     .catch((error) => {
-        console.error('Erreur lors du démarrage du serveur :', error);
+        console.error('Erreur de connexion à la base de données SQLite:', error);
     });
 
+sequelize.sync({ force: false }).then(async () => {
+    console.log('Synchronisation du modèle effectuée.');
+
+    app.listen(port, () => {
+        console.log(`Serveur lancé sur http://localhost:${port}`);
+    });
+});
 /* Route GET sur la racine /
 / Défi typage relevé : on précise que 'req' est de type Request et 'res' de type Response
 interface Etudiant {
@@ -43,7 +42,7 @@ interface Etudiant {
     nom: string;
     prenom: string;
 }
-/ Ton tableau de données typé
+/ tableau de données typé
 const etudiants: Etudiant[] = [
     { id: 1, nom: "Dupont", prenom: "Jean" },
     { id: 2, nom: "Martin", prenom: "Sophie" },
@@ -71,23 +70,3 @@ app.get('/api/hello/:name', (req: Request, res: Response) => {
     });
 });
 */
-
-
-/* partie synvrho qui marche
- SYNCHRONISATION : C'est ici que Sequelize crée les tables manquantes
-sequelize.authenticate()
-    .then(() => {
-        console.log('Connexion à la base de données SQLite établie.');
-    })
-    .catch((error) => {
-        console.error('Erreur de connexion à la base de données SQLite:', error);
-    });
-
-
-sequelize.sync().then(() => {
-    console.log('Synchronisation du modèle avec la base de données effectuée.');
-
-    app.listen(port, () => {
-        console.log(`Serveur lancé sur http://localhost:${port}`);
-    });
-});*/

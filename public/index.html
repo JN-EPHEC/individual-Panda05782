@@ -15,21 +15,34 @@
     <h1 class="mb-4">Liste des étudiants</h1>
 
     <form id="userForm" class="row g-3 mb-4">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <input type="text" id="nom" class="form-control" placeholder="Nom" required>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <input type="text" id="prenom" class="form-control" placeholder="Prénom" required>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
+            <input type="text" id="matricule" class="form-control" placeholder="Matricule (ex: HE12345)" required>
+        </div>
+        <div class="col-md-3">
             <button type="submit" class="btn btn-primary w-100">Ajouter</button>
         </div>
     </form>
 
     <hr>
 
-    <ul id="userList" class="list-group mt-3">
-        </ul>
+    <table class="table table-hover mt-3">
+        <thead>
+            <tr>
+                <th style="cursor: pointer;" onclick="sortTable('nom')">Nom &#8597;</th>
+                <th style="cursor: pointer;" onclick="sortTable('prenom')">Prénom &#8597;</th>
+                <th style="cursor: pointer;" onclick="sortTable('matricule')">Matricule &#8597;</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="userList">
+        </tbody>
+    </table>
 </div>
 
 <script src="script.js"></script>

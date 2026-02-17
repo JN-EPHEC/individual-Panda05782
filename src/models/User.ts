@@ -14,6 +14,10 @@ User.init(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    matricule: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   {
     sequelize,
