@@ -22,7 +22,7 @@
             <input type="text" id="prenom" class="form-control" placeholder="Prénom" required>
         </div>
         <div class="col-md-3">
-            <input type="text" id="matricule" class="form-control" placeholder="Matricule (ex: HE12345)" required>
+            <input type="text" id="matricule" class="form-control" placeholder="Matricule" required>
         </div>
         <div class="col-md-3">
             <button type="submit" class="btn btn-primary w-100">Ajouter</button>
@@ -31,12 +31,17 @@
 
     <hr>
 
+    <div id="statsContainer" class="alert alert-info mb-3">
+        Les élèves présents : <span id="presentCount">0</span> / <span id="totalCount">0</span>
+    </div>
+
     <table class="table table-hover mt-3">
         <thead>
             <tr>
                 <th style="cursor: pointer;" onclick="sortTable('nom')">Nom &#8597;</th>
                 <th style="cursor: pointer;" onclick="sortTable('prenom')">Prénom &#8597;</th>
                 <th style="cursor: pointer;" onclick="sortTable('matricule')">Matricule &#8597;</th>
+                <th>Présence</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -44,7 +49,6 @@
         </tbody>
     </table>
 </div>
-
 <script src="script.js"></script>
 </body>
 </html>

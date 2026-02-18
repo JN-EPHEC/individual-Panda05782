@@ -1,4 +1,3 @@
-// public/script.js
 const userForm = document.getElementById('userForm');
 const userList = document.getElementById('userList');
 
@@ -29,18 +28,72 @@ async function loadUsers() {
     }
 }
 
+async function presence(userId, currentStatus) {
+    try {
+        await fetch(`/api/users/${userId}/presence`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ present: !currentStatus })
+        });
+        loadUsers();
+        stats();
+    } catch (e) {
+        console.error("Erreur toggle présence:", e);
+    }
+}
+
+    async function stats() {
+        try {
+            const response = await fetch('/api/stats');
+            
+        if (!response.ok) {
+            console.error('Erreur stats HTTP:', response.status);
+            return;
+        }
+        
+        const stats = await response.json();
+        const container = document.getElementById('statsContainer');
+        
+        if (container) {
+            container.innerHTML = `
+                <strong>Statistiques :</strong> 
+                Total: ${stats.total} étudiants | 
+                Présents: ${stats.presents}
+            `;
+        }
+    } catch (e) {
+        console.error("Erreur stats UI", e);
+    }
+}
+
 function displayUsers(users) {
     let html = '';
     for (const user of users) {
+        let presenceClass;
+        let presenceText;
+        
+        if (user.present) {
+            presenceClass = 'btn-success';
+            presenceText = 'Présent';
+        } else {
+            presenceClass = 'btn-secondary';
+            presenceText = 'Absent';
+        }
+        
         html += `
-        <tr>
-            <td>${user.nom}</td>
-            <td>${user.prenom}</td>
-            <td>${user.matricule}</td>
-            <td>
-                <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">Supprimer</button>
-            </td>
-        </tr>
+            <tr>
+                <td>${user.nom}</td>
+                <td>${user.prenom}</td>
+                <td>${user.matricule}</td>
+                <td>
+                    <button class="btn btn-sm ${presenceClass}" onclick="presence(${user.id}, ${user.present})">
+                        ${presenceText}
+                    </button>
+                </td>
+                <td>
+                    <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">Supprimer</button>
+                </td>
+            </tr>
         `;
     }
     userList.innerHTML = html;
@@ -107,7 +160,8 @@ if (userForm) {
         });
 
         userForm.reset();
-        loadUsers(); // Rafraîchissement
+        loadUsers();//rafraichit
+        stats();
     });
 }
 

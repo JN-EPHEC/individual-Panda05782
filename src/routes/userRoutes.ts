@@ -1,12 +1,11 @@
 import { Router, Request, Response } from 'express';
-import User from '../models/User'; // Import du modèle pour parler à la DB
+import User from '../models/User';
 
 const router = Router();
 
-// --- 1. GET ALL USERS ---
+// mon GET
 router.get('/users', async (req: Request, res: Response) => {
   try {
-    // findAll() génère un "SELECT * FROM users" en SQL
     const users = await User.findAll();
     console.log('Users récupérés:', users); // DEBUG
     res.json(users);
@@ -16,7 +15,7 @@ router.get('/users', async (req: Request, res: Response) => {
   }
 });
 
-// --- 2. CREATE USER (POST) ---
+// mon CREATE and Post
 router.post('/users', async (req: Request, res: Response) => {
   try {
     const { nom, prenom, matricule } = req.body;
@@ -26,7 +25,7 @@ router.post('/users', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Nom, prenom et matricule requis' });
     }
 
-    // create() génère un "INSERT INTO users..."
+    // et mon INSERT INTO
     const newUser = await User.create({ nom, prenom, matricule });
     console.log('Utilisateur créé:', newUser); // DEBUG
     res.status(201).json(newUser);
@@ -36,22 +35,41 @@ router.post('/users', async (req: Request, res: Response) => {
   }
 });
 
-// --- 3. DELETE USER BY ID ---
+// mon DELETE
 router.delete('/users/:id', async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
 
-    // destroy() génère un "DELETE FROM users WHERE id = ..."
     const deletedCount = await User.destroy({ where: { id: id } });
 
     if (deletedCount === 0) {
       return res.status(404).json({ error: 'Utilisateur non trouvé' });
     }
 
-    res.status(204).send(); // Succès, mais pas de contenu à renvoyer
+    res.status(204).send();
   } catch (error) {
     console.error('Erreur DELETE /users:', error); // DEBUG
     res.status(500).json({ error: 'Erreur lors de la suppression' });
+  }
+});
+
+// mon UPDATE présence
+router.patch('/users/:id/presence', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { present } = req.body;
+
+    const user = await User.findByPk(id);
+    
+    if (!user) {
+      return res.status(404).json({ error: 'Utilisateur non trouvé' });
+    }
+
+    await user.update({ present });
+    res.json(user);
+  } catch (error) {
+    console.error('Erreur PATCH /users/:id/presence:', error);
+    res.status(500).json({ error: 'Erreur lors de la mise à jour' });
   }
 });
 

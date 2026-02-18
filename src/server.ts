@@ -1,25 +1,29 @@
 import express, { Request, Response } from 'express';
 import sequelize from './config/database';
-import './models/User';
+import User from './models/User';
 import userRouter from './routes/userRoutes';
-import User = require('./models/User');
+import { StatsService } from './stat/stats';
 
 const app = express();
 const port: number = 3000;
 
-// 1. Middlewares de configuration
-// Permet à Express de lire le JSON envoyé par le client (req.body)
 app.use(express.json());
 
-// 2. Servir les fichiers statiques (Point 4.1 du TP)
-// Cherche automatiquement index.html dans le dossier /public
 app.use(express.static('public'));
 
-// 3. Définition des routes API
-// On préfixe toutes les routes du fichier userRouter par '/api'
 app.use('/api', userRouter);
 
-// 4. Authentification et Synchronisation avec la base de données
+app.get('/api/stats', async (req: Request, res: Response) => {
+    try {
+        const stats = await StatsService.getGlobalStats();
+        console.log('Stats générées:', stats); // DEBUG
+        res.json(stats);
+    } catch (error) {
+        console.error('Erreur stats:', error);
+        res.status(500).json({ error: "Erreur stats" });
+    }
+});
+
 sequelize.authenticate()
     .then(() => {
         console.log('Connexion à la base de données SQLite établie.');
@@ -30,7 +34,13 @@ sequelize.authenticate()
 
 sequelize.sync({ force: false }).then(async () => {
     console.log('Synchronisation du modèle effectuée.');
-
+    // au cas où si j'ai rien dans ma table je mets qd même qqch chose qui s'affiche
+    const count = await User.count();
+    if (count === 0) {
+        await User.bulkCreate([
+            { nom: 'Alpha', prenom: 'test', matricule: 'HE0000' }
+        ]);
+    }
     app.listen(port, () => {
         console.log(`Serveur lancé sur http://localhost:${port}`);
     });
@@ -60,10 +70,8 @@ app.get('/', (req: Request, res: Response) => {
 
 / Route avec paramètre dynamique (:name)
 app.get('/api/hello/:name', (req: Request, res: Response) => {
-    / 1. On récupère la valeur de ":name" depuis l'URL
     const nameFromUrl: string = req.params.name;
 
-    / 2. On prépare la réponse JSON demandée
     res.json({
         message: `Bonjour ${nameFromUrl}`,
         timestamp: new Date().toISOString() // Génère la date précise au format ISO

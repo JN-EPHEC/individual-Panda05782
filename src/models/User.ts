@@ -18,11 +18,15 @@ User.init(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    present: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   },
   {
     sequelize,
     modelName: 'User',
-    tableName: 'users', // la table s'appellera "users"
+    tableName: 'users',
   }
 );
 
