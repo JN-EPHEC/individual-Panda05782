@@ -3,6 +3,7 @@ import { requestLogger } from './middlewares/logger';
 import sequelize from './config/database';
 import './models/User';
 import userRouter from './routes/userRoutes';
+import { errorHandler } from './middlewares/errorHandler';
 
 const app = express();
 const port: number = 3000;
@@ -15,6 +16,7 @@ app.use(requestLogger);
 
 app.use('/api', userRouter);
 
+app.use(errorHandler);
 // Authentification et Synchronisation
 sequelize.authenticate()
     .then(() => {

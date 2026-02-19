@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import User from '../models/User'; // Import du modèle pour parler à la DB
 import * as userController from "../controllers/userController";
 
@@ -8,35 +8,39 @@ const router = Router();
 router.get("/users", userController.getAllUsers);
 
 // POST
-router.post('/users', async (req: Request, res: Response) => {
+router.post('/users', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { nom, prenom } = req.body; 
 
     if (!nom || !prenom) {
-      return res.status(400).json({ error: 'Nom et prenom requis' });
+      const error: any = new Error('Nom et prenom requis');
+      error.status = 400;
+      return next(error);
     }
 
     const newUser = await User.create({ nom, prenom });
     res.status(201).json(newUser);
   } catch (error) {
-    res.status(500).json({ error: 'Erreur lors de la création' });
+    next(error);
   }
 });
 
 // DELETE
-router.delete('/users/:id', async (req: Request, res: Response) => {
+router.delete('/users/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
 
     const deletedCount = await User.destroy({ where: { id: id } });
 
     if (deletedCount === 0) {
-      return res.status(404).json({ error: 'Utilisateur non trouvé' });
+      const error: any = new Error('Utilisateur non trouvé');
+      error.status = 404;
+      return next(error);
     }
 
     res.status(204).send(); // Succès, mais pas de contenu à renvoyer
   } catch (error) {
-    res.status(500).json({ error: 'Erreur lors de la suppression' });
+    next(error);
   }
 });
 
