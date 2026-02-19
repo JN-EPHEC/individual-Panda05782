@@ -53,7 +53,7 @@ router.delete('/users/:id', async (req: Request, res: Response) => {
   }
 });
 
-// mon UPDATE présence
+// mon UPDATE pr les présences
 router.patch('/users/:id/presence', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
