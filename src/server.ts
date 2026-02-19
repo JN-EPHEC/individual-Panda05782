@@ -6,6 +6,8 @@ import userRouter from './routes/userRoutes';
 import { errorHandler } from './middlewares/errorHandler';
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./config/swagger";
+import cors from 'cors';
+
 
 const app = express();
 const port: number = 3000;
@@ -21,6 +23,9 @@ app.use(requestLogger);
 app.use('/api', userRouter);
 
 app.use(errorHandler);
+
+app.use(cors()); // Autorise tout le monde (acceptable uniquement en dev)
+
 // Authentification et Synchronisation
 sequelize.authenticate()
     .then(() => {
