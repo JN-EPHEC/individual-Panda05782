@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import { requestLogger } from './middlewares/logger';
 import sequelize from './config/database';
 import './models/User';
 import userRouter from './routes/userRoutes';
@@ -6,19 +7,15 @@ import userRouter from './routes/userRoutes';
 const app = express();
 const port: number = 3000;
 
-// 1. Middlewares de configuration
-// Permet à Express de lire le JSON envoyé par le client (req.body)
 app.use(express.json());
 
-// 2. Servir les fichiers statiques (Point 4.1 du TP)
-// Cherche automatiquement index.html dans le dossier /public
 app.use(express.static('public'));
 
-// 3. Définition des routes API
-// On préfixe toutes les routes du fichier userRouter par '/api'
+app.use(requestLogger);
+
 app.use('/api', userRouter);
 
-// 4. Authentification et Synchronisation avec la base de données
+// Authentification et Synchronisation
 sequelize.authenticate()
     .then(() => {
         console.log('Connexion à la base de données SQLite réussie.');
@@ -27,7 +24,6 @@ sequelize.authenticate()
     })
     .then(() => {
         console.log('Synchronisation du modèle effectuée.');
-        // 5. Lancement du serveur
         app.listen(port, () => {
             console.log(`Serveur lancé sur http://localhost:${port}`);
         });

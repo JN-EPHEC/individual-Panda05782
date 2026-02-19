@@ -5,7 +5,7 @@ import * as userController from "../controllers/userController";
 const router = Router();
 
 // GET
-router.get("/", userController.getAllUsers);
+router.get("/users", userController.getAllUsers);
 
 // POST
 router.post('/users', async (req: Request, res: Response) => {
@@ -28,7 +28,6 @@ router.delete('/users/:id', async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
 
-    // destroy() génère un "DELETE FROM users WHERE id = ..."
     const deletedCount = await User.destroy({ where: { id: id } });
 
     if (deletedCount === 0) {

@@ -2,7 +2,7 @@ import { Sequelize } from 'sequelize';
 
 const sequelize = new Sequelize({
   dialect: 'sqlite',
-  storage: './src/config/database.sqlite' // Le fichier se créera ici
+  storage: './src/config/database.sqlite'
 });
 
 // On teste la connexion dans la console
