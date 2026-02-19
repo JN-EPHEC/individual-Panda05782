@@ -1,10 +1,10 @@
 import type { Request, Response, NextFunction } from 'express';
 
-export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
+export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
     console.error(err);
 
-    const status = 500;
-
+    const status = err.status || err.statusCode || 500;
+    
     const message = err.message || 'Une erreur est survenue';
 
     res.status(status).json({ error: message });
