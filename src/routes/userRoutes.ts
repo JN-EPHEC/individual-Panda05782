@@ -1,10 +1,20 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { Router, type Request, type Response, type NextFunction } from 'express';
 import User from '../models/User'; // Import du modèle pour parler à la DB
 import * as userController from "../controllers/userController";
 
 const router = Router();
 
 // GET
+/**
+* @swagger
+* /api/users:
+*   get:
+*     summary: Récupère la liste des utilisateurs
+*     tags: [Users]
+*     responses:
+*       200:
+*         description: Succès
+*/  
 router.get("/users", userController.getAllUsers);
 
 // POST
@@ -13,8 +23,8 @@ router.post('/users', async (req: Request, res: Response, next: NextFunction) =>
     const { nom, prenom } = req.body; 
 
     if (!nom || !prenom) {
-      const error: any = new Error('Nom et prenom requis');
-      error.status = 400;
+      const error: any = new Error('Nom et prenom requis'); //error si mon prenom ou nom est manquant
+      error.status = 400; //donne le status 400 
       return next(error);
     }
 

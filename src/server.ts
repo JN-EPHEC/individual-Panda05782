@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { type Request, type Response } from 'express';
 import { requestLogger } from './middlewares/logger';
 import sequelize from './config/database';
 import './models/User';
