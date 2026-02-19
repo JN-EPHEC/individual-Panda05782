@@ -1,20 +1,13 @@
 import { Router, Request, Response } from 'express';
 import User from '../models/User'; // Import du modèle pour parler à la DB
+import * as userController from "../controllers/userController";
 
 const router = Router();
 
-// --- 1. GET ALL USERS ---
-router.get('/users', async (req: Request, res: Response) => {
-  try {
-    // findAll() génère un "SELECT * FROM users" en SQL
-    const users = await User.findAll();
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ error: 'Erreur lors de la récupération' });
-  }
-});
+// GET
+router.get("/", userController.getAllUsers);
 
-// --- 2. CREATE USER (POST) ---
+// POST
 router.post('/users', async (req: Request, res: Response) => {
   try {
     const { nom, prenom } = req.body; 
@@ -23,7 +16,6 @@ router.post('/users', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Nom et prenom requis' });
     }
 
-    // create() génère un "INSERT INTO users..."
     const newUser = await User.create({ nom, prenom });
     res.status(201).json(newUser);
   } catch (error) {
@@ -31,7 +23,7 @@ router.post('/users', async (req: Request, res: Response) => {
   }
 });
 
-// --- 3. DELETE USER BY ID ---
+// DELETE
 router.delete('/users/:id', async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
