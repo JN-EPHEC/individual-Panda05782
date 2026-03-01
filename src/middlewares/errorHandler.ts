@@ -9,3 +9,13 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
 
     res.status(status).json({ error: message });
 };
+
+export const checkIdParam = (err: any, req: Request, res: Response, next: NextFunction) => {
+    console.error(err);
+
+    const statusID = err.status || err.statusCode || 400;
+
+    const message = err.message || 'Une erreur est survenue';
+
+    res.status(statusID).json({ error: message });
+};
