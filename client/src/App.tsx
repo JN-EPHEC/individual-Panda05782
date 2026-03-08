@@ -1,32 +1,44 @@
 import { useEffect, useState } from "react";
+import './App.css'
+
 // Définition d'une interface pour le typage
-// Sera couvert plus en profondeur en TH
+// Correspond au modèle User du backend
 interface User {
   id: number;
-  name: string;
+  nom: string;
+  prenom: string;
 }
 
 function App() {
   // 1. Définition de l'état
   const [data, setData] = useState<User[]>([]);
+  
   // 2. Appel API au montage du composant
   useEffect(() => {
     fetch("http://localhost:3000/api/users")
       .then(res => res.json())
       .then(result => setData(result))
-.catch(err => console.error(err));
-}, []);
+      .catch(err => console.error(err));
+  }, []);
 
-// 3. Rendu (JSX)
-return (
-  <div>
-    <h1>Liste des utilisateurs</h1>
-    <ul>
-      {data.map((item) => (
-        <li key={item.id}>{item.name}</li>
-      ))}
-    </ul>
-  </div>
+  // 3. Rendu (JSX)
+  return (
+    <div className="container">
+      <div className="main-card">
+        <h1>Liste des étudiants</h1>
+        
+        <hr />
+        
+        <ul className="user-list">
+          {data.map((user) => (
+            <li key={user.id} className="user-item">
+              <span className="user-name">{user.nom} {user.prenom}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   );
 }
+
 export default App;
